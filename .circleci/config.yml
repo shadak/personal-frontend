@@ -8,10 +8,6 @@ jobs:
     steps:
       - checkout
       # -- Build and test here before building image and pushing.
-      # -- Add the docker CLI to alpine before proceeding.
-      - run:
-          name: Install Docker Client
-          command: apk add docker-cli
       - setup_remote_docker:
           version: 19.03.13
           docker_layer_caching: false 
