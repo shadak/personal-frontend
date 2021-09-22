@@ -1,0 +1,25 @@
+version: 2
+
+jobs:
+  build:
+    working_directory: ~/workspace
+    docker:
+      - image: circleci/node:16-alpine
+    steps:
+      - checkout
+      # -- Build and test here before building image and pushing.
+      # -- Add the docker CLI to alpine before proceeding.
+      - run:
+        name: Install Docker Client
+        command: apk add docker-cli
+      - setup_remote_docker:
+        version: 19.03.13
+        docker_layer_caching: true
+      # -- Building Docker Image and Pushing to Dockerhub.
+      - run: |
+        TAG=0.1.$CIRCLE_BUILD_NUM
+        docker build -t shadak/personal-frontend
+        echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+        docker push shadak/personal-frontend:$TAG
+        
+      
