@@ -16,6 +16,6 @@ jobs:
       # -- Building Docker Image and Pushing to Dockerhub using Packer.
       - ansible/install
       - ansible/playbook:
-          playbook: ./.ansible/build.yaml
+          playbook: ./.ansible/build.yml
 
     
