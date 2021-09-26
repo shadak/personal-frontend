@@ -8,7 +8,7 @@
     build:
       args:
         ENV: prod
-      path: ../../../../
+      path: ../../../../ 
       pull: yes
     name: shadak/personal-frontend
     source: build
