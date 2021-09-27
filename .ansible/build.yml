@@ -1,6 +1,6 @@
 ---
 - name: Build, Tag and Push Docker Image from Local folder.
-  hosts: 127.0.0.1
+  hosts: localhost 
   connection: local
 
   tasks:
