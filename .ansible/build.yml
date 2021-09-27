@@ -2,5 +2,39 @@
 - name: Build, Tag and Push Docker Image from Local folder.
   hosts: 127.0.0.1
   connection: local
-  roles:
-    - app-build
+
+  tasks:
+    - name: Login to Docker
+      docker_login:
+        username: "{{ lookup('env','DOCKER_USERNAME') }}"
+        password: "{{ lookup('env','DOCKER_PASSWORD') }}"
+      
+    - name: Build Docker Image
+      docker_image:
+        build:
+          args:
+          ENV: prod
+          path: ../../../../ 
+          pull: yes
+        name: shadak/personal-frontend
+        source: build
+        state: present
+        tag: latest
+  
+    - name: Generate git commit hash
+      command: git log -n 1 --format="%h"
+      register: commit_hash
+
+    - name: Tag and push image with commit hash
+      docker_image:
+        name: shadak/personal-frontend:latest
+        repository: shadak/personal-frontend
+        push: yes
+        source: local
+
+    - name: Push image with latest tag
+      docker_image:
+        name: shadak/personal-frontend
+        tag: latest
+        push: yes
+        source: local

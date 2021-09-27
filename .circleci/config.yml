@@ -6,7 +6,7 @@ jobs:
   build:
     working_directory: ~/workspace
     docker:
-      - image: circleci/node
+      - image: circleci/python
     steps:
       - checkout
       # -- Build and test here before building image and pushing.
