@@ -19,17 +19,6 @@
         state: present
         tag: latest
   
-    - name: Generate git commit hash
-      command: git log -n 1 --format="%h"
-      register: commit_hash
-
-    - name: Tag and push image with commit hash
-      docker_image:
-        name: shadak/personal-frontend:latest
-        repository: shadak/personal-frontend
-        push: yes
-        source: local
-
     - name: Push image with latest tag
       docker_image:
         name: shadak/personal-frontend
