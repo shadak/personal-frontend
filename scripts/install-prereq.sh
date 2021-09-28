@@ -1,3 +1,3 @@
 sudo apt-get update
-sudo apt-get ansible
+sudo apt-get install ansible
 pip install docker
