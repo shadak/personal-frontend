@@ -2,7 +2,6 @@
 - name: Build, Tag and Push Docker Image from Local folder.
   hosts: localhost 
   connection: local
-
   tasks:
     - name: Login to Docker
       docker_login:
@@ -13,7 +12,6 @@
       docker_image:
         build:
           args:
-          ENV: prod
           path: ../../../../ 
           pull: yes
         name: shadak/personal-frontend
