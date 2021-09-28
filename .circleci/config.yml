@@ -1,6 +1,4 @@
 version: 2.1
-orbs:
-  ansible: orbss/ansible-playbook@0.0.5
 
 jobs:
   build:
@@ -15,9 +13,11 @@ jobs:
           docker_layer_caching: false 
       # -- Building Docker Image and Pushing to Dockerhub using Packer.
       - run:
-        command: "pip install docker"
-      - ansible/install
-      - ansible/playbook:
-          playbook: ./.ansible/build.yml
+          name: "Installing Prerequisits"
+          command: "sh ./scripts/install-prereq.sh"
+      - run:
+          name: "Building with Ansible-Playbook"
+          command: "ansible-playbook ./ansible/build.yml"
+
 
     
