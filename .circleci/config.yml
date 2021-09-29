@@ -11,12 +11,18 @@ jobs:
       - setup_remote_docker:
           version: 19.03.13
           docker_layer_caching: false 
+      - add_ssh_keys:
+          fingerprints:
+            - 0d:43:0d:17:c7:a9:91:1e:ec:08:2a:ba:2a:9d:3f:cd 
       # -- Building Docker Image and Pushing to Dockerhub using Packer.
       - run:
-          name: "Installing Prerequisits"
-          command: "sh ./scripts/install-prereq.sh"
-      - run:
-          name: "Building with Ansible-Playbook"
+          name: "Installing Prereqs"
+          command: |
+            if [ "${CIRCLE_BRANCH"} == "main" ]; then
+              sudo pip install ansible docker
+            fi
+      - deploy:
+          name: "Building and Pushing Docker Images"
           command: "ansible-playbook ./.ansible/build.yml"
 
 
