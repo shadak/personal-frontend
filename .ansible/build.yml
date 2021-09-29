@@ -3,6 +3,11 @@
   connection: local
   
   tasks:
+    - name: Login to Docker
+      docker_login:
+        username: "{{ lookup('env','DOCKER_USERNAME') }}"
+        password: "{{ lookup('env','DOCKER_PASSWORD') }}"
+
     - name: Build Docker Image.
       docker_image:
         build:
