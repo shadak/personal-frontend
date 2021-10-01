@@ -20,10 +20,43 @@ jobs:
           command: |
             if [ "${CIRCLE_BRANCH}" == "main" ]; then
               sudo pip install ansible docker
+              sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl
+              curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+              sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs)
+              sudo apt-get update && sudo apt-get install terraform
             fi
       - deploy:
           name: "Building and Pushing Docker Images"
           command: "ansible-playbook ./.ansible/build.yml"
 
+      - deploy:
+          name: "Building A Packer Image"
+          working_directory: ~/workspace/.packer
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "main" ]; then
+              packer build -machine-readable web.json | tee web.log
+              echo "export PACKER_IMAGE_ID=$(grep 'artifact,0,id' web.log | cut -d: -f2)" >> $BASH_ENV
+            fi
+      
+      - deploy:
+          name: "Terraform Init and Plan"
+          working_directory: ~/workspace/.terraform
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              terraform init -force-copy -input=false
+              terraform plan \
+                -var "web_image_id=${PACKER_IMAGE_ID}" \
+                -var "pvt_key=${HOME}/.ssh/id_rsa_97728274n22912fa3fhdfk14a2636cec"
+            fi
 
-    
+      - deploy:
+          name: "Terraform Apply"
+          working_directory: ~/workspace/.terraform
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              terraform apply \
+                -auto-approve \
+                -var "web_image_id=${PACKER_IMAGE_ID}" \
+                -var "pvt_key=${HOME}/.ssh/id_rsa_97728274n22912fa3fhdfk14a2636cec"
+            fi
+
